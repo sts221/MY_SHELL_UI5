@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+
+		<script src="resources_local/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.ux3"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<!-- add sap.ui.table,sap.ui.ux3 and/or other libraries to 'data-sap-ui-libs' if required -->
+<!--var view = sap.ui.view({id:"idview11", viewName:"my_shell_ui5.view1", type:sap.ui.core.mvc.ViewType.JS});
+				view.placeAt("content"); -->
+		<script>
+				sap.ui.localResources("my_shell_ui5");
+				jQuery.sap.require("sap.ui.core.routing.Router");
+				jQuery.sap.require("sap.ui.core.routing.HashChanger");
+				var oShell = sap.ui.ux3.Shell("shellId", {
+				    appTitle: "SAPUI5 Shell",
+				    appIcon: "images/hover.gif",
+				    appIconTooltip: "icon tooltip ...",
+				    showLogoutButton: false,
+				    showSearchTool: true,
+				    showInspectorTool: true,
+				    showFeederTool: true,
+				    worksetItems: [
+				                   new sap.ui.ux3.NavigationItem ("view1Id",{key:"view1", text: "Home (=view1)"}),  //key is identical to the view name (view1)
+				                   new sap.ui.ux3.NavigationItem("view2Id", {key:"view2", text: "page2 (=view2)"})  //key is identical to the view name (view2)
+				                   ],
+				    worksetItemSelected: function(oEvent) {
+				    	this.removeAllContent();
+				    	var selected = oEvent.getParameter("key");
+				    	console.log(selected);
+				    	
+				        /*In case you use the router, you don;t need this  	
+				    	var view = sap.ui.getCore().byId(selected);
+				    	if (view == undefined) {
+				    		view = new sap.ui.view({
+				    			id: selected,
+				    			viewName: "my_shell_ui5." + selected,
+				    			type: sap.ui.core.mvc.ViewType.JS
+				    		})
+				    	}  // end if
+				    	this.addContent(view);
+				    	console.log("The view is: " +view); */
+				    	
+				    	var oHashChanger = new sap.ui.core.routing.HashChanger();
+				    	console.log(oRouter.getURL(selected));
+				    	oHashChanger.setHash(oRouter.getURL(selected));
+				    },
+				    content: [new sap.ui.view({
+				    	id: "view1DefaultContent",
+				    	viewName: "my_shell_ui5.view1",
+				    	type: sap.ui.core.mvc.ViewType.JS
+				    })]
+				});
+				oShell.placeAt("content");
+				
+				var oRouter = new sap.ui.core.routing.Router([
+				   {
+				    pattern: ["View1"],
+				    name: "view1",
+				    view:"my_shell_ui5.view1",
+				    viewType: sap.ui.core.mvc.ViewType.JS,
+				    targetControl: "shellId",
+				    targetAggregation: "content",
+				    clearTarget:true,
+				    callback: function() {
+				    	                  oShell.setSelectedWorksetItem("view1Id");
+				                         }
+				   },
+				   {
+					    pattern: ["View2"],
+					    name: "view2",
+					    viewName:"my_shell_ui5.view2",   
+					    /*The name of a view that will be created, the first time this route will be matched.
+					     *To place the view into a Control use the targetAggregation and targetControl. 
+					     * Views will only be created once per Router.  */
+					    viewType: sap.ui.core.mvc.ViewType.JS,
+					    controlId: "shellId",
+					    /*Views will be put into a container Control, this might be a sap.ui.ux3.Shell control 
+					     *or a sap.m.NavContainer if working with mobile, or any other container. 
+					     * The id of this control has to be put in here.  */
+					    controlAggregation: "content",  // sap.m.navContainer for mobile
+					    // clearTarget:true, - deprecated
+					    clearControlAggregation: true,   /* Default is false. Defines a boolean that can 
+					    be passed to specify if the aggregation should be cleared before adding the View to it. 
+					    When using a sap.ui.ux3.Shell this should be true. For a sap.m.NavContainer it should be false. */
+					    callback: function() {
+					    	                   oShell.setSelectedWorksetItem("view2Id");
+					                         }
+					}
+		        ]);
+				oRouter.register("appRouter");
+				oRouter.initialize();
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>
